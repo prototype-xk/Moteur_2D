@@ -49,6 +49,11 @@ int main () {
 	int screenHeight = windowHeight;
 	std::cout << "[INFO] Game configured for resolution: " << screenWidth << "x" << screenHeight << "\n";
 
+	SDL_Texture* backgroundTexture = IMG_LoadTexture(renderer, "assets/Background1.png");
+	if (!backgroundTexture) {
+		std::cerr << "[ERROR] IMG_LoadTexture failed: " << SDL_GetError() << "\n";
+	}
+
 	/*Initialisation Fonts*/
 	TTF_Font* font = TTF_OpenFont("assets/000webfont.ttf", 36);
 	if (!font) {
@@ -60,6 +65,40 @@ int main () {
 		return 1;
 	}
 
+	SDL_Color white = { 255,255,255,255 };
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, "[DEBUG] Hello SDL3", 0, white);
+	if (!textSurface) {
+		std::cerr << "[ERROR] TTF_RenderText_Blended failed: " << SDL_GetError() << "\n";
+		TTF_CloseFont(font);
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		TTF_Quit();
+		SDL_Quit();
+		return 1;
+	}
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_DestroySurface(textSurface);
+
+	if (!textTexture) {
+		std::cerr << "[ERROR] SDL_CreateTextureFromSurface failed: " << SDL_GetError() << "\n";
+		TTF_CloseFont(font);
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		TTF_Quit();
+		SDL_Quit();
+		return 1;
+	}
+
+	float textW = 0, textH = 0;
+	if (!SDL_GetTextureSize(textTexture, &textW, &textH)) {
+		std::cerr << "[ERROR] SDL_GetTextureSize failed: " << SDL_GetError() << "\n";
+	}
+	SDL_FRect textRect;
+	textRect.x = 20.0f;
+	textRect.y = 20.0f;
+	textRect.w = textW;
+	textRect.h = textH;
 
 	bool running = true;
 	bool isFullscreen = false;
@@ -81,14 +120,19 @@ int main () {
 					else {
 						SDL_SyncWindow(window);
 					}
+					SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+					std::cout << "[INFO] Window size: " << windowWidth << "x" << windowHeight << "\n";
 				}
 			}
 		}
-
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
+		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
+		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
 		SDL_RenderPresent(renderer);
 	}
+	SDL_DestroyTexture(textTexture);
+	SDL_DestroyTexture(backgroundTexture);
 	TTF_CloseFont(font);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
