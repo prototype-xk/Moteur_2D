@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+\.vs
+/Moteur_2D/x64
+/Moteur_2D/Moteur_2D/x64
