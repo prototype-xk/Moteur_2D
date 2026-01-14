@@ -3,10 +3,13 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
 int main () {
 	/*Initialisation de SDL*/
 	std::cerr << "[INITIALIZATION] Starting SDL3 initialization\n";
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) {
 		std::cerr << "[DEBUG] SDL Init failed :" << SDL_GetError() << "\n";
 		return 1;
 	}
@@ -22,7 +25,7 @@ int main () {
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 	/*Creation de la fenetre*/
-	if (!SDL_CreateWindowAndRenderer("", 1280, 720, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
+	if (!SDL_CreateWindowAndRenderer("", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
 		std::cerr << "[ERROR] SDL_CreateWindowAndRenderer failed: " << SDL_GetError() << "\n";
 		TTF_Quit();
 		SDL_Quit();
