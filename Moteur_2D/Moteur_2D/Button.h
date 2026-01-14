@@ -10,6 +10,7 @@ class Button
 {
 public:
     Button(SDL_Texture* texture, float x, float y, float w, float h);
+    ~Button();
 
     void handleEvent(const SDL_Event& e);
     void render(SDL_Renderer* renderer);
