@@ -3,6 +3,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 
+#include "Button.h"
+
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
@@ -25,7 +27,7 @@ int main () {
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 	/*Creation de la fenetre*/
-	if (!SDL_CreateWindowAndRenderer("", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
+	if (!SDL_CreateWindowAndRenderer("Skybound 0.1", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
 		std::cerr << "[ERROR] SDL_CreateWindowAndRenderer failed: " << SDL_GetError() << "\n";
 		TTF_Quit();
 		SDL_Quit();
@@ -102,6 +104,21 @@ int main () {
 	textRect.y = 20.0f;
 	textRect.w = textW;
 	textRect.h = textH;
+	SDL_Texture* buttonTexture = IMG_LoadTexture(renderer, "assets/button.png");
+	if (!buttonTexture) {
+		std::cerr << "[ERROR] IMG_LoadTexture button failed: " << SDL_GetError() << "\n";
+	}
+	Button buttonPlay(buttonTexture, 100.0f, 100.0f, 200.0f, 50.0f);
+
+	SDL_Color black = { 0,0,0,255 };
+	buttonPlay.setText(renderer, font, "Play", black);
+
+	SDL_Cursor* defaultCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_DEFAULT);
+	SDL_Cursor* handCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
+
+	if (defaultCursor) {
+		SDL_SetCursor(defaultCursor);
+	}
 
 	bool running = true;
 	bool isFullscreen = false;
@@ -127,13 +144,23 @@ int main () {
 					std::cout << "[INFO] Window size: " << windowWidth << "x" << windowHeight << "\n";
 				}
 			}
+			buttonPlay.handleEvent(e);
+		}
+		if (buttonPlay.isHovered()) {
+			if (handCursor) SDL_SetCursor(handCursor);
+		}
+		else {
+			if (defaultCursor) SDL_SetCursor(defaultCursor);
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
 		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
+		buttonPlay.render(renderer);
 		SDL_RenderPresent(renderer);
 	}
+	if (handCursor)    SDL_DestroyCursor(handCursor);
+	if (defaultCursor) SDL_DestroyCursor(defaultCursor);
 	SDL_DestroyTexture(textTexture);
 	SDL_DestroyTexture(backgroundTexture);
 	TTF_CloseFont(font);
