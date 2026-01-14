@@ -60,8 +60,17 @@ int main () {
 	}
 
 	/*Initialisation Fonts*/
-	TTF_Font* font = TTF_OpenFont("assets/000webfont.ttf", 36);
+	TTF_Font* font = TTF_OpenFont("assets/Font/000webfont.ttf", 36);
 	if (!font) {
+		std::cerr << "[ERROR] TTF_OpenFont failed: " << SDL_GetError() << "\n";
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		TTF_Quit();
+		SDL_Quit();
+		return 1;
+	}
+	TTF_Font* fontPlay = TTF_OpenFont("assets/Font/ka1.ttf", 26);
+	if (!fontPlay) {
 		std::cerr << "[ERROR] TTF_OpenFont failed: " << SDL_GetError() << "\n";
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
@@ -111,7 +120,7 @@ int main () {
 	Button buttonPlay(buttonTexture, 100.0f, 100.0f, 200.0f, 50.0f);
 
 	SDL_Color black = { 0,0,0,255 };
-	buttonPlay.setText(renderer, font, "Play", black);
+	buttonPlay.setText(renderer, fontPlay, "Play", black);
 
 	SDL_Cursor* defaultCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_DEFAULT);
 	SDL_Cursor* handCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
@@ -163,6 +172,7 @@ int main () {
 	if (defaultCursor) SDL_DestroyCursor(defaultCursor);
 	SDL_DestroyTexture(textTexture);
 	SDL_DestroyTexture(backgroundTexture);
+	TTF_CloseFont(fontPlay);
 	TTF_CloseFont(font);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
