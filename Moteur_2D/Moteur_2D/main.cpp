@@ -2,6 +2,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
+#include "Player.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -102,6 +103,7 @@ int main () {
 	textRect.y = 20.0f;
 	textRect.w = textW;
 	textRect.h = textH;
+	Player player();
 
 	bool running = true;
 	bool isFullscreen = false;
@@ -132,6 +134,7 @@ int main () {
 		SDL_RenderClear(renderer);
 		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
 		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
+		player().render(renderer);
 		SDL_RenderPresent(renderer);
 	}
 	SDL_DestroyTexture(textTexture);
