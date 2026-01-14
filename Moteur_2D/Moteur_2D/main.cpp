@@ -25,7 +25,7 @@ int main () {
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 	/*Creation de la fenetre*/
-	if (!SDL_CreateWindowAndRenderer("", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
+	if (!SDL_CreateWindowAndRenderer("", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
 		std::cerr << "[ERROR] SDL_CreateWindowAndRenderer failed: " << SDL_GetError() << "\n";
 		TTF_Quit();
 		SDL_Quit();
