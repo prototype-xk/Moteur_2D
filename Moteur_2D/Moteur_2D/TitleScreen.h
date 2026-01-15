@@ -1,12 +1,19 @@
 #pragma once
 #include "Screen.h"
+#include "ResourceManager.h"
+#include <string>
+
 class TitleScreen : public Screen
 {
 	SDL_Window* window;
+	SDL_Renderer* Renderer;
 	bool isFullScreen;
-	SDL_Texture* bg;
+
+	ResourceManager& resources;
+	std::string titleBackGroundId;
+
 public:
-	TitleScreen(SDL_Window* window, SDL_Texture* bg);
+	TitleScreen(SDL_Window* window, SDL_Renderer* renderer);
 
 	inline bool isInFullScreen() const { return isFullScreen; }
 

@@ -175,10 +175,10 @@ int main () {
 	bool running = true;
 	bool isFullscreen = false;
 	GameScreenEnum currentScreen = GameScreenEnum::TitleScreen;
-	TitleScreen screen0(window, backgroundTexture);
-	MenuScreen screen1();
-	GameScreen screen2();
-	GameOver screen3();
+	TitleScreen screen0(window, renderer);
+	MenuScreen screen1(window, renderer);
+	GameScreen screen2(window, renderer);
+	GameOver screen3(window, renderer);
 
 	std::vector<Screen> screens;
 	SDL_Event e;

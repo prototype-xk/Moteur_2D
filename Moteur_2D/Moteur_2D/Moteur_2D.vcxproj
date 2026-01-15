@@ -140,6 +140,7 @@
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
   </ItemGroup>
@@ -149,6 +150,7 @@
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameScreen.h" />
     <ClInclude Include="MenuScreen.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="TitleScreen.h" />
   </ItemGroup>
