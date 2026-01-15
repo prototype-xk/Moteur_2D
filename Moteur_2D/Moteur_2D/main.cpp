@@ -103,18 +103,28 @@ int main () {
 	textRect.y = 20.0f;
 	textRect.w = textW;
 	textRect.h = textH;
-	Player player();
+	Player player;
 
 	bool running = true;
 	bool isFullscreen = false;
 	SDL_Event e;
+	//Gestion du temps et du clavier
+	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
+	Uint64 lastTime = SDL_GetTicks();
+	std::vector<SDL_Event> events;
 
 	while (running) {
+		//Calcul de deltaTime
+		Uint64 currentTime = SDL_GetTicks();
+		float deltaTime = (currentTime - lastTime) / 1000.0f;
+		lastTime = currentTime;
+
+		events.clear();
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_EVENT_QUIT) {
 				running = false;
 			}
-
+			events.push_back(e);
 			if (e.type == SDL_EVENT_KEY_DOWN) {
 				if (e.key.key == SDLK_F11) {
 					isFullscreen = !isFullscreen;
@@ -130,11 +140,13 @@ int main () {
 				}
 			}
 		}
+
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
 		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
-		player().render(renderer);
+		player.update(keyboardState, deltaTime, events);
+		player.render(renderer);
 		SDL_RenderPresent(renderer);
 	}
 	SDL_DestroyTexture(textTexture);

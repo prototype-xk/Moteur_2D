@@ -6,7 +6,7 @@
 #define PLAYER_JUMP_COLOR 0xff00ff00 //Vert
 #define PLAYER_LEFT_COLOR 0xffffff00 //Jaune
 #define PLAYER_RIGHT_COLOR 0xffff00c8 //Rose
-#define PLAYER_STATIC_COLOR 0xffff0000 //Rouge
+#define PLAYER_IDLE_COLOR 0xffff0000 //Rouge
 
 #define RGBA_ALPHA(color)   ((Uint8)(((color)>>24)&0xff))
 #define RGBA_RED(color)     ((Uint8)(((color)>>16)&0xff))

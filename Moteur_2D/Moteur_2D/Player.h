@@ -13,9 +13,10 @@ public:
 	Player();
 	~Player();
 	float x, y;
+	Uint32 color;
 	SDL_FRect rect;
 	SDL_Event pe;
-	void update(const bool* keys, float deltaTime);
+	void update(const bool* keys, float deltaTime, std::vector<SDL_Event>& events);
 	void render(SDL_Renderer* renderer);
 	bool checkCollision(const SDL_FRect& other);
 };
