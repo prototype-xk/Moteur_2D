@@ -14,9 +14,9 @@
 #define SCREEN_HEIGHT 720
 
 enum class GameScreenEnum {
-	TitleScreen, 
-	MainMenu, 
-	Gameplay, 
+	TitleScreen,
+	MainMenu,
+	Gameplay,
 	GameOver
 };
 
