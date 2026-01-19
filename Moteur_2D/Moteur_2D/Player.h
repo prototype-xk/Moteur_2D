@@ -8,7 +8,7 @@
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
 
-class Player{
+class Player {
 public:
 	float x, y;
 	Uint32 color;
@@ -19,10 +19,11 @@ public:
 	bool moveUp = false;
 	bool moveDown = false;
 
-	Player();
+	Player() = default;
+	Player(float screenW, float screenH);
 	void handleEvent(const SDL_Event& e);
 	void update(float deltaTime);
 	void render(SDL_Renderer* renderer);
 	bool checkCollision(const SDL_FRect& other);
+	void respawn(float screenW, float screenH);
 };
-
