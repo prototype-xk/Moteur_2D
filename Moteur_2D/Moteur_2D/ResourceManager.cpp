@@ -69,7 +69,7 @@ bool ResourceManager::loadFont(std::string id, std::string filePath, float size)
 	entry.id = id;
 	entry.fonts = font;
 	fonts.push_back(entry);
-	std::cout << "[SUCCESS] Loaded font '" << id << "'\n";
+	std::cout << "[SUCCESS] Loaded font '" << id << "' (" << (void*)font <<")\n";
 	return true;
 }
 
@@ -135,6 +135,7 @@ void ResourceManager::clear() {
 
 	for (auto& entry : fonts)
 	{
+		std::cout << "Freeing " << (void*)entry.fonts << std::endl;
 		TTF_CloseFont(entry.fonts);
 	}
 	fonts.clear();

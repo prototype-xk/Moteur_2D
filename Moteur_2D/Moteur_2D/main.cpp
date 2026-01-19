@@ -74,60 +74,62 @@ int main () {
 	}
 
 	bool running = true;
-	GameScreenEnum currentScreen = GameScreenEnum::TitleScreen;
-	Uint64 lastFrame = SDL_GetTicks();
-	std::vector<SDL_Event> events;
+	{
+		GameScreenEnum currentScreen = GameScreenEnum::TitleScreen;
+		Uint64 lastFrame = SDL_GetTicks();
+		std::vector<SDL_Event> events;
 
-	SDL_Event e;
-	events.clear();
-
-	TitleScreen titleScreen(window, renderer);
-	MenuScreen menuScreen(window, renderer);
-	GameScreen gameScreen(window, renderer);
-	GameOver gameOverScreen(window, renderer);
-	ScoreScreen scoreScreen(window, renderer);
-
-	std::vector<Screen*> screens = {
-		&titleScreen,      // 0 - TitleScreen
-		&menuScreen,       // 1 - MainMenu
-		&gameScreen,       // 2 - Gameplay
-		&scoreScreen,      // 3 - ScoreScreen
-		&gameOverScreen    // 4 - GameOver
-	};
-
-	while (running) {
-		Uint64 startFrame = SDL_GetTicks();
-		Uint64 deltaTime = startFrame - lastFrame;
-		lastFrame = startFrame;
-
+		SDL_Event e;
 		events.clear();
-		while (SDL_PollEvent(&e)) {
-			events.push_back(e);
+
+		TitleScreen titleScreen(window, renderer);
+		MenuScreen menuScreen(window, renderer);
+		GameScreen gameScreen(window, renderer);
+		GameOver gameOverScreen(window, renderer);
+		ScoreScreen scoreScreen(window, renderer);
+
+		std::vector<Screen*> screens = {
+			&titleScreen,      // 0 - TitleScreen
+			&menuScreen,       // 1 - MainMenu
+			&gameScreen,       // 2 - Gameplay
+			&scoreScreen,      // 3 - ScoreScreen
+			&gameOverScreen    // 4 - GameOver
+		};
+
+		while (running) {
+			Uint64 startFrame = SDL_GetTicks();
+			Uint64 deltaTime = startFrame - lastFrame;
+			lastFrame = startFrame;
+
+			events.clear();
+			while (SDL_PollEvent(&e)) {
+				events.push_back(e);
+			}
+
+			Screen* activeScreen = screens[static_cast<int>(currentScreen)];
+			Screen::Result result = activeScreen->update(deltaTime, events);
+
+			switch (result) {
+			case Screen::Result::quitGame:
+				running = false;
+				break;
+
+			case Screen::Result::nextScreen:
+				currentScreen = (currentScreen == GameScreenEnum::GameOver)
+					? GameScreenEnum::MainMenu
+					: static_cast<GameScreenEnum>(static_cast<int>(currentScreen) + 1);
+				std::cout << "[INFO] Switched to screen: " << static_cast<int>(currentScreen) << "\n";
+				break;
+
+			case Screen::Result::sameScreen:
+				break;
+			}
+
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderClear(renderer);
+			activeScreen->renderer(renderer);
+			SDL_RenderPresent(renderer);
 		}
-
-		Screen* activeScreen = screens[static_cast<int>(currentScreen)];
-		Screen::Result result = activeScreen->update(deltaTime, events);
-
-		switch (result) {
-		case Screen::Result::quitGame:
-			running = false;
-			break;
-
-		case Screen::Result::nextScreen:
-			currentScreen = (currentScreen == GameScreenEnum::GameOver)
-				? GameScreenEnum::MainMenu
-				: static_cast<GameScreenEnum>(static_cast<int>(currentScreen) + 1);
-			std::cout << "[INFO] Switched to screen: " << static_cast<int>(currentScreen) << "\n";
-			break;
-
-		case Screen::Result::sameScreen:
-			break;
-		}
-
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
-		activeScreen->renderer(renderer);
-		SDL_RenderPresent(renderer);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
