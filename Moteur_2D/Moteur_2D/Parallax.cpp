@@ -29,7 +29,7 @@ bool Parallax::addLayer(const std::string& imagePath, float speedRatio){
 void Parallax::update(float deltaTime, float playerX, float playerY){
 	for (auto& layer : m_layers) {
 		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
-		layer.offsetX = -playerX * layer.speedRatio;
+		layer.offsetX = -playerX * layer.speedRatio * 5.0f;
 		layer.offsetY = -playerY * layer.speedRatio * 0.5f;
 
 		//Boucle infinie horizontale
@@ -39,10 +39,6 @@ void Parallax::update(float deltaTime, float playerX, float playerY){
 }
 
 void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHeight){
-	/*Rendu de fond en noir pour masquer les bords
-	SDL_SetRenderDrawColor(renderer, 0, 0, 20, 255);
-	SDL_Rect bgRect = { 0, 0, (int)screenWidth, (int)screenHeight };
-	SDL_RenderFillRect(renderer, &bgRect); */
 	
 	for (const auto& layer : m_layers) {
 		SDL_FRect srcRect = { 0, 0, layer.width, layer.height };
