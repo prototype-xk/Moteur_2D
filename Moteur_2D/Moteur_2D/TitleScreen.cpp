@@ -4,7 +4,7 @@ TitleScreen::TitleScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
 	, Renderer(renderer)
 	, isFullScreen(false)
-	, resources(renderer)
+	, resources(Renderer)
 	, titleBackGroundId("title_background")
 
 {
@@ -42,7 +42,6 @@ Screen::Result TitleScreen::update(Uint64 time, std::vector<SDL_Event> &events) 
 void TitleScreen::renderer(SDL_Renderer* renderer){
 	SDL_Texture* bg = resources.getTexture(titleBackGroundId);
 	if (!bg) {
-		std::cerr << "[ERROR] TitleScreen background texture not found\n";
 		return;
 	}
 

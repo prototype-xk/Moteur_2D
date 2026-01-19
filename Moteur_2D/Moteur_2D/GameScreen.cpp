@@ -4,7 +4,7 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
 	, Renderer(renderer)                 // <--- on stocke le renderer
 	, isFullScreen(false)
-	, resources(renderer)              // <--- on initialise la référence
+	, resources(Renderer)              // <--- on initialise la référence
 	, titleBackGroundId("title_background")
 
 {

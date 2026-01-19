@@ -4,13 +4,13 @@ MenuScreen::MenuScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
 	, Renderer(renderer)                 // <--- on stocke le renderer
 	, isFullScreen(false)
-	, resources(renderer)              // <--- on initialise la référence
+	, resources(Renderer)              // <--- on initialise la référence
 	, titleBackGroundId("title_background")
 
 {
-	if (!this->resources.loadTexture(titleBackGroundId, "assets/ScreenTitle.png"))
+	if (!this->resources.loadTexture(titleBackGroundId, "assets/Background1.png"))
 	{
-		std::cerr << "[ERROR] TitleScreen failed to load assets/ScreenTitle.png\n";
+		std::cerr << "[ERROR] TitleScreen failed to load assets/Background1.png\n";
 	}
 }
 

@@ -34,5 +34,8 @@ private:
 	SDL_Renderer* renderer;
 	std::vector<TextureEntry> textures;
 	std::vector<FontEntry> fonts;
+
+	bool hasLoggedTextureError;
+	bool hasLoggedFontError;
 };
 
