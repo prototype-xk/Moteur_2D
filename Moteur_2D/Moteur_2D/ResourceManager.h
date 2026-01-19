@@ -29,6 +29,8 @@ public:
 	bool loadFont(std::string id, std::string filePath, float size);
 	TTF_Font* getFont(std::string id);
 
+	bool createTextTexture(std::string textureId, std::string fontId, const std::string& text, SDL_Color color);
+
 	void clear();
 private:
 	SDL_Renderer* renderer;

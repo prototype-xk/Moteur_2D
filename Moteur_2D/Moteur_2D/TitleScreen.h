@@ -12,6 +12,10 @@ class TitleScreen : public Screen
 	ResourceManager resources;
 	std::string titleBackGroundId;
 
+	std::string fontId;
+	std::string textTextureId;
+	SDL_FRect textRect;
+
 public:
 	TitleScreen(SDL_Window* window, SDL_Renderer* renderer);
 

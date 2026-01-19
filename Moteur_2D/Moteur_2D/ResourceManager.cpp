@@ -50,7 +50,7 @@ SDL_Texture* ResourceManager::getTexture(std::string id) {
 }
 
 bool ResourceManager::loadFont(std::string id, std::string filePath, float size) {
-	for (auto& entry : textures) {
+	for (auto& entry : fonts) {
 		if (entry.id == id)
 			std::cout << "[WARNING] Font '" << id << "' already loaded\n";
 			return true;
@@ -81,6 +81,47 @@ TTF_Font* ResourceManager::getFont(std::string id) {
 		hasLoggedFontError = true;
 	}
 	return nullptr;
+}
+
+bool ResourceManager::createTextTexture(std::string textureId, std::string fontId, const std::string& text, SDL_Color color) {
+	for (auto& entry : textures) {
+		if (entry.id==textureId){
+			std::cout << "[WARNING] Text texture '" << textureId << "' already exists\n";
+			return true;
+		}
+	}
+
+	TTF_Font* font = getFont(fontId);
+	if (!font) {
+		std::cerr << "[ERROR] Cannot create text texture '" << textureId
+			<< "': font '" << fontId << "' not found\n";
+		return false;
+	}
+
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), 0, color);
+	if (!textSurface) {
+		std::cerr << "[ERROR] Failed to create text surface for '" << textureId
+			<< "': " << SDL_GetError() << "\n";
+		return false;
+	}
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_DestroySurface(textSurface);
+
+	if (!textTexture) {
+		std::cerr << "[ERROR] Failed to create text texture for '" << textureId
+			<< "': " << SDL_GetError() << "\n";
+		return false;
+	}
+
+	TextureEntry entry;
+	entry.id = textureId;
+	entry.texture = textTexture;
+	textures.push_back(entry);
+
+	std::cout << "[SUCCESS] Created text texture '" << textureId << "' with text: \""
+		<< text << "\"\n";
+	return true;
 }
 
 void ResourceManager::clear() {

@@ -15,7 +15,7 @@ ScoreScreen::ScoreScreen(SDL_Window* window, SDL_Renderer* renderer) :
 }
 
 Screen::Result ScoreScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
-	Result res = Screen::update(time, events);
+	Result res = Screen::update(time, events);	
 
 	for (const auto& e : events)
 	{
