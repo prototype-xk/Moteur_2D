@@ -7,15 +7,14 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, isFullScreen(false)
 	, resources(Renderer)
 	, titleBackGroundId("title_background")
+	, m_camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+	, m_parallax(renderer)
 	, playerSpawned(false)
 	, screenWidth(0)
 	, screenHeight(0)
 
 {
-	if (!this->resources.loadTexture(titleBackGroundId, "assets/Background2.jpg"))
-	{
-		std::cerr << "[ERROR] TitleScreen failed to load assets/Background2.jpg\n";
-	}
+	m_parallax.addLayer("assets/Background2.jpg", 0.3f);
 }
 
 Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
@@ -32,26 +31,30 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 	for (auto& e : events) player.handleEvent(e);
 	float deltaTime = time / 1000.0f;
 	player.update(deltaTime);
+	//Camera suit le joueur
+	m_camera.update(player.x, player.y, m_worldWidth, m_worldHeight);
+	//Parallax update avec camera
+	m_parallax.update(deltaTime, m_camera.getX(), m_camera.getY());
+
 	return res;
 }
 
 void GameScreen::renderer(SDL_Renderer* renderer) {
-	SDL_Texture* bg = resources.getTexture(titleBackGroundId);
-	if (!bg) {
-		std::cerr << "[ERROR] TitleScreen background texture not found\n";
-		return;
-	}
+	SDL_SetRenderDrawColorRGBA(renderer, PARALLAX_NIGHT_SKY_COLOR);
+	SDL_FRect bgRect = { 0, 0, screenWidth, screenHeight };
+	SDL_RenderFillRect(renderer, &bgRect);
 
-	int w;
-	int h;
-	SDL_GetWindowSize(window, &w, &h);
+	m_parallax.render(renderer, screenWidth, screenHeight);
 
-	SDL_FRect dst;
-	dst.x = 0.0f;
-	dst.y = 0.0f;
-	dst.w = static_cast<float>(w);
-	dst.h = static_cast<float>(h);
+	// Joueur toujours centré à l'écran
+	float playerScreenX = screenWidth * 0.5f - 50.0f;  // Centre horizontal
+	float playerScreenY = screenHeight * 0.5f - 50.0f; // Centre vertical
 
-	SDL_RenderTexture(renderer, bg, nullptr, &dst);
+	SDL_FRect playerScreenRect = {
+		playerScreenX, playerScreenY,
+		100.0f, 100.0f  // Taille joueur (ajustez)
+	};
+
+	
 	player.render(renderer);
 }

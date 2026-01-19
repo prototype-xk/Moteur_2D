@@ -4,7 +4,8 @@
 
 #define BTN_BACKGROUND_COLOR  0xffc4c4c4
 
-#define BTN_BACKGROUND_COLOR  0xffc4c4c4
+#define PARALLAX_NIGHT_SKY_COLOR 0xff000014
+
 #define PLAYER_JUMP_COLOR 0xff00ff00 //Vert
 #define PLAYER_LEFT_COLOR 0xffffff00 //Jaune
 #define PLAYER_RIGHT_COLOR 0xffff00c8 //Rose

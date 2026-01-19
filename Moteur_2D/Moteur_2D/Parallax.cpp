@@ -52,7 +52,7 @@ void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHei
 		while (x < screenWidth) {
 			SDL_FRect destRect = {
 				x, layer.offsetY,
-				layer.width, screenHeight
+				layer.width, layer.height
 			};
 			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
 			x += layer.width;

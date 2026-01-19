@@ -65,9 +65,7 @@ int main () {
 
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
-	/*Creation de la fenetre*/
-	if (!SDL_CreateWindowAndRenderer("", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
-		std::cerr << "[ERROR] SDL_CreateWindowAndRenderer failed: " << SDL_GetError() << "\n";
+	if (!createWindow(&window, &renderer)) {
 		TTF_Quit();
 		SDL_Quit();
 		return 1;
@@ -124,8 +122,6 @@ int main () {
 			case Screen::Result::sameScreen:
 				break;
 			}
-			player.handleEvent(e);
-			
 
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			SDL_RenderClear(renderer);
