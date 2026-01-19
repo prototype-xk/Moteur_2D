@@ -3,6 +3,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 #include "Player.h"
+#include "Parallax.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -105,6 +106,12 @@ int main () {
 	textRect.h = textH;
 	Player player;
 
+	//Parallax : création et chargement des layers
+	Parallax parallax(renderer);
+	parallax.addLayer("assets/parallax_far.png", 0.1f);   // fond
+	parallax.addLayer("assets/parallax_mid.png", 0.3f);   // milieu
+	parallax.addLayer("assets/parallax_near.png", 0.6f);  // avant-plan
+
 	bool running = true;
 	bool isFullscreen = false;
 	SDL_Event e;
@@ -148,9 +155,14 @@ int main () {
 			}
 		}
 		player.update(deltaTime);
+		parallax.update(deltaTime, player.x, player.y);
+
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
+
+		parallax.render(renderer, windowWidth, windowHeight);
+
+		
 		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
 		
 		player.render(renderer);
