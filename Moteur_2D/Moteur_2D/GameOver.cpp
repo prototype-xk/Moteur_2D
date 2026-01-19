@@ -4,7 +4,7 @@ GameOver::GameOver(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
 	, Renderer(renderer)                 // <--- on stocke le renderer
 	, isFullScreen(false)
-	, resources(resources)              // <--- on initialise la référence
+	, resources(renderer)              // <--- on initialise la référence
 	, titleBackGroundId("title_background")
 
 {

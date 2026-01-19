@@ -9,7 +9,7 @@ class TitleScreen : public Screen
 	SDL_Renderer* Renderer;
 	bool isFullScreen;
 
-	ResourceManager& resources;
+	ResourceManager resources;
 	std::string titleBackGroundId;
 
 public:

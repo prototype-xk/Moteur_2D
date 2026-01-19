@@ -180,13 +180,13 @@ int main () {
 	GameScreen screen2(window, renderer);
 	GameOver screen3(window, renderer);
 
-	std::vector<Screen> screens;
+	std::vector<Screen*> screens;
 	SDL_Event e;
 
-	screens.emplace_back(screen0);
-	screens.emplace_back(screen1);
-	screens.emplace_back(screen2);
-	screens.emplace_back(screen3);
+	screens.push_back(&screen0);
+	screens.push_back(&screen1);
+	screens.push_back(&screen2);
+	screens.push_back(&screen3);
 	Uint64 lastFrame = SDL_GetTicks();
 	std::vector<SDL_Event> events;
 
@@ -199,9 +199,9 @@ int main () {
 			events.push_back(e);
 		}
 
-		auto& currentScreenObj = screens[(int)currentScreen];
+		auto currentScreenObj = screens[(int)currentScreen];
 
-		switch (currentScreenObj.update(deltaTime, events))
+		switch (currentScreenObj->update(deltaTime, events))
 		{
 		case Screen::Result::quitGame:
 			running = false;

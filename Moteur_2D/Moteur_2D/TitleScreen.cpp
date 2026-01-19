@@ -2,9 +2,9 @@
 #include <iostream>
 TitleScreen::TitleScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
-	, Renderer(renderer)                 // <--- on stocke le renderer
+	, Renderer(renderer)
 	, isFullScreen(false)
-	, resources(resources)              // <--- on initialise la référence
+	, resources(renderer)
 	, titleBackGroundId("title_background")
 
 {
@@ -17,7 +17,7 @@ TitleScreen::TitleScreen(SDL_Window* window, SDL_Renderer* renderer) :
 Screen::Result TitleScreen::update(Uint64 time, std::vector<SDL_Event> &events) {
 	Result res = Screen::update(time, events);
 
-	for(auto& e : events)
+	for(const auto& e : events)
 	{
 		if (e.type == SDL_EVENT_KEY_DOWN && (e.key.key == SDLK_RETURN || e.key.key == SDLK_KP_ENTER)) {
 			isFullScreen = true;
