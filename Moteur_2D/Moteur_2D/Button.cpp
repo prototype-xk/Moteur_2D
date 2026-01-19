@@ -5,6 +5,14 @@ Button::Button(SDL_Texture* texture, float x, float y, float w, float h): m_text
     baseRect = { x, y, w, h };
 }
 
+Button::~Button()
+{
+    if (m_textTexture) {
+        SDL_DestroyTexture(m_textTexture);
+        m_textTexture = nullptr;
+    }
+}
+
 void Button::setText(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color) {
     if (m_textTexture) {
         SDL_DestroyTexture(m_textTexture);
