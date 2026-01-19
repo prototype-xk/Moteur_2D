@@ -14,9 +14,10 @@ ResourceManager::~ResourceManager() {
 
 bool ResourceManager::loadTexture(std::string id, std::string filePath) {
 	for (auto& entry : textures) {
-		if (entry.id == id)
+		if (entry.id == id) {
 			std::cout << "[WARNING] Texture '" << id << "' already loaded\n";
 			return true;
+		}
 	}
 	std::cout << "[INFO] Loading texture '" << id << "' from '" << filePath << "'...\n";
 
@@ -51,9 +52,10 @@ SDL_Texture* ResourceManager::getTexture(std::string id) {
 
 bool ResourceManager::loadFont(std::string id, std::string filePath, float size) {
 	for (auto& entry : fonts) {
-		if (entry.id == id)
+		if (entry.id == id) {
 			std::cout << "[WARNING] Font '" << id << "' already loaded\n";
 			return true;
+		}
 	}
 
 	std::cout << "[INFO] Loading font '" << id << "' from '" << filePath << "'...\n";
@@ -85,7 +87,7 @@ TTF_Font* ResourceManager::getFont(std::string id) {
 
 bool ResourceManager::createTextTexture(std::string textureId, std::string fontId, const std::string& text, SDL_Color color) {
 	for (auto& entry : textures) {
-		if (entry.id==textureId){
+		if (entry.id == textureId) {
 			std::cout << "[WARNING] Text texture '" << textureId << "' already exists\n";
 			return true;
 		}
@@ -119,8 +121,7 @@ bool ResourceManager::createTextTexture(std::string textureId, std::string fontI
 	entry.texture = textTexture;
 	textures.push_back(entry);
 
-	std::cout << "[SUCCESS] Created text texture '" << textureId << "' with text: \""
-		<< text << "\"\n";
+	std::cout << "[SUCCESS] Created text texture '" << textureId << "' with text: \"" << text << "\"\n";
 	return true;
 }
 

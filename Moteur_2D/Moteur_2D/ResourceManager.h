@@ -9,7 +9,7 @@
 
 struct TextureEntry {
 	std::string id;
-	SDL_Texture* texture;
+	SDL_Texture* texture = nullptr;
 };
 
 struct FontEntry {
