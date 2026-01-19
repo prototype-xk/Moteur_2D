@@ -14,7 +14,15 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, screenHeight(0)
 
 {
-	m_parallax.addLayer("assets/Background2.jpg", 0.3f);
+	m_parallax.addLayer("assets/Background1.png",1.0f, 1.0f); //Speed/ Taille normale
+
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 0.0f, 200.0); //Speed/ 50% plus petit/ x / y
+
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 800.0f, 100.0); //Speed/ 50% plus petit/ x / y
+
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 400.0f, 500.0); //Speed/ 50% plus petit/ x / y
+
+	
 }
 
 Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
@@ -32,7 +40,7 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 	float deltaTime = time / 1000.0f;
 	player.update(deltaTime);
 	//Camera suit le joueur
-	m_camera.update(player.x, player.y, m_worldWidth, m_worldHeight);
+	m_camera.update(player.x, player.y);
 	//Parallax update avec camera
 	m_parallax.update(deltaTime, m_camera.getX(), m_camera.getY());
 
@@ -52,9 +60,9 @@ void GameScreen::renderer(SDL_Renderer* renderer) {
 
 	SDL_FRect playerScreenRect = {
 		playerScreenX, playerScreenY,
-		100.0f, 100.0f  // Taille joueur (ajustez)
+		64.0f, 64.0f  // Taille joueur (ajustez)
 	};
 
 	
-	player.render(renderer);
+	player.render(renderer, m_camera.getX(), m_camera.getY());
 }

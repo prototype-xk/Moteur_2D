@@ -10,7 +10,7 @@ Parallax::~Parallax(){
 	}
 }
 
-bool Parallax::addLayer(const std::string& imagePath, float speedRatio){
+bool Parallax::addLayer(const std::string& imagePath, float speedRatio, float scale, float initialX, float initialY){
 	SDL_Texture* texture = IMG_LoadTexture(m_renderer, imagePath.c_str());
 	if (!texture) {
 		std::cerr << "[PARALLAX] Failed to load: " << imagePath << std::endl;
@@ -21,20 +21,27 @@ bool Parallax::addLayer(const std::string& imagePath, float speedRatio){
 	SDL_GetTextureSize(texture, &w, &h);
 
 	m_layers.push_back({
-		texture, speedRatio, 0.0f, 0.0f, w, h
+		texture, speedRatio, 0.0f, 0.0f,
+		w * scale, //Taille reduite
+		h * scale, //Taille reduite
+		scale, initialX, initialY // Decalages initiaux 
 	});
 	return true;
 }
 
-void Parallax::update(float deltaTime, float playerX, float playerY){
+void Parallax::update(float deltaTime, float cameraX, float cameraY){
 	for (auto& layer : m_layers) {
 		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
-		layer.offsetX = -playerX * layer.speedRatio * 5.0f;
-		layer.offsetY = -playerY * layer.speedRatio * 0.5f;
+		layer.offsetX = -cameraX * layer.speedRatio + layer.initialOffsetX;
+		layer.offsetY = -cameraY * layer.speedRatio + layer.initialOffsetY;
 
 		//Boucle infinie horizontale
 		while (layer.offsetX > 0) layer.offsetX -= layer.width;
 		while (layer.offsetX < -layer.width) layer.offsetX += layer.width;
+
+		//Boucle infini verticale
+		while (layer.offsetY > 0) layer.offsetY -= layer.height;
+		while (layer.offsetY < -layer.height) layer.offsetY += layer.height;
 	}
 }
 
@@ -43,13 +50,10 @@ void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHei
 	for (const auto& layer : m_layers) {
 		SDL_FRect srcRect = { 0, 0, layer.width, layer.height };
 
-		//Rendu de 2 copies pour l'effet infini
+		//Rendu horizontal infini
 		float x = layer.offsetX;
 		while (x < screenWidth) {
-			SDL_FRect destRect = {
-				x, layer.offsetY,
-				layer.width, layer.height
-			};
+			SDL_FRect destRect = { x, layer.offsetY, layer.width, layer.height };
 			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
 			x += layer.width;
 		}
@@ -57,10 +61,7 @@ void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHei
 		//Copie suivante pour couvrir tout l'écran
 		x = layer.offsetX - layer.width;
 		while (x < screenWidth) {
-			SDL_FRect destRect = {
-				x, layer.offsetY,
-				layer.width, screenHeight
-			};
+			SDL_FRect destRect = { x, layer.offsetY, layer.width, screenHeight };
 			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
 			x += layer.width;
 		}

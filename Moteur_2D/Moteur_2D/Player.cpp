@@ -36,8 +36,8 @@ void Player::handleEvent(const SDL_Event& e) {
 }
 
 void Player::update(float deltaTime) {
-	float speed = 300.0f;
-	float jump = 500.0f;
+	float speed = 500.0f;
+	float jump = 600.0f;
 
 	if (moveLeft) {
 		x -= speed * deltaTime;
@@ -62,15 +62,20 @@ void Player::update(float deltaTime) {
 	rect.y = y;
 }
 
-void Player::render(SDL_Renderer* renderer) {
-	rect.x = x;
-	rect.y = y;
+void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
+	//Position ecran = position monde - position camera
+	float screenX = x - cameraX;
+	float screenY = y - cameraY;
 
+	SDL_FRect screenRect = {
+		screenX, screenY,
+		RECT_WIDTH, RECT_HEIGHT
+	};
 
 
 	SDL_SetRenderDrawColorRGBA(renderer, color);
 
 
 
-	SDL_RenderFillRect(renderer, &rect);
+	SDL_RenderFillRect(renderer, &screenRect);
 }

@@ -12,13 +12,16 @@ public:
 		float offsetY;
 		float width;
 		float height;
+		float scale = 1.0f;
+		float initialOffsetX = 0.0f; //décalage initial X
+		float initialOffsetY = 0.0f; //décalage initial Y
 	};
 
 	Parallax(SDL_Renderer* renderer);
 	~Parallax();
 
-	bool addLayer(const std::string& imagePath, float speedRatio);
-	void update(float deltaTime, float playerX, float playerY);
+	bool addLayer(const std::string& imagePath, float speedRatio, float scale, float initialX = 0.0f, float initialY = 0.0f);
+	void update(float deltaTime, float cameraX, float cameraY);
 	void render(SDL_Renderer* renderer, float screenWidth, float screenHeight);
 
 private:

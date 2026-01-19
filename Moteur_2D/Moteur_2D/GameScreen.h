@@ -16,8 +16,6 @@ class GameScreen : public Screen
 
 	Camera m_camera;
 	Parallax m_parallax;
-	float m_worldWidth = 4000.0f;
-	float m_worldHeight = 2000.0f;
 
 public:
 	GameScreen(SDL_Window* window, SDL_Renderer* renderer);

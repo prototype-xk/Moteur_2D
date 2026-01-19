@@ -23,7 +23,7 @@ public:
 	Player(float screenW, float screenH);
 	void handleEvent(const SDL_Event& e);
 	void update(float deltaTime);
-	void render(SDL_Renderer* renderer);
+	void render(SDL_Renderer* renderer, float cameraX, float cameraY);
 	bool checkCollision(const SDL_FRect& other);
 	void respawn(float screenW, float screenH);
 };
