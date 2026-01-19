@@ -4,6 +4,13 @@
 
 #define BTN_BACKGROUND_COLOR  0xffc4c4c4
 
+#define BTN_BACKGROUND_COLOR  0xffc4c4c4
+#define PLAYER_JUMP_COLOR 0xff00ff00 //Vert
+#define PLAYER_LEFT_COLOR 0xffffff00 //Jaune
+#define PLAYER_RIGHT_COLOR 0xffff00c8 //Rose
+#define PLAYER_IDLE_COLOR 0xffff0000 //Rouge
+
+
 using Color = Uint32;
 
 #define RGBA_ALPHA(color)   ((Uint8)(((color)>>24)&0xff))
