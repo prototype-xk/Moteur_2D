@@ -35,6 +35,11 @@ Player::Player(float screenW, float screenH, ResourceManager& res)
 	// Charge ta spritesheet (mets le bon chemin de ton fichier)
 	resources.loadTexture("player_sprite", "assets/character-spritesheet.png");
 	anims = resources.getTexture("player_sprite");
+
+	// Debug: vérifie que la texture est chargée
+	if (anims == nullptr) {
+		std::cerr << "[PLAYER ERROR] Failed to load sprite texture!\n";
+	}
 }
 
 void Player::respawn(float screenW, float screenH) {
@@ -115,9 +120,23 @@ void Player::update(float deltaTime) {
 	rect.y = y;
 }
 
-void Player::render(SDL_Renderer* renderer) {
-	// Rectangle de destination (où afficher à l'écran)
-	SDL_FRect rcdAnim = { rect.x, rect.y, ANIM_WIDTH, ANIM_HEIGHT };
+void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
+	// Debug: vérifie que la texture existe
+	if (anims == nullptr) {
+		std::cerr << "[PLAYER ERROR] anims is nullptr in render!\n";
+		return;
+	}
+
+	// Récupère les dimensions de l'écran
+	int screenW, screenH;
+	SDL_GetRenderOutputSize(renderer, &screenW, &screenH);
+
+	// Le joueur est toujours centré à l'écran
+	float centerX = screenW * 0.5f - ANIM_WIDTH * 0.5f;
+	float centerY = screenH * 0.5f - ANIM_HEIGHT * 0.5f;
+
+	// Rectangle de destination (toujours centré)
+	SDL_FRect rcdAnim = { centerX, centerY, ANIM_WIDTH, ANIM_HEIGHT };
 
 	// Rectangle source (quelle partie de la spritesheet découper)
 	SDL_FRect rcsAnim = { 0, 0, ANIM_WIDTH, ANIM_HEIGHT };
@@ -133,7 +152,7 @@ void Player::render(SDL_Renderer* renderer) {
 
 	case CHSTATE_JUMPING:
 		row = AnimRow::JUMP;
-		frame = 0; // Temporaire, on verra le jump plus tard
+		frame = 0;
 		break;
 
 	default: // CHSTATE_IDLE
@@ -143,8 +162,8 @@ void Player::render(SDL_Renderer* renderer) {
 	}
 
 	// Calcule la position dans la spritesheet
-	rcsAnim.x = ANIM_WIDTH * frame;          // Colonne (quelle frame)
-	rcsAnim.y = ANIM_HEIGHT * (row + dir);   // Ligne (animation + direction)
+	rcsAnim.x = ANIM_WIDTH * frame;
+	rcsAnim.y = ANIM_HEIGHT * (row + dir);
 
 	// Affiche la texture
 	SDL_RenderTexture(renderer, anims, &rcsAnim, &rcdAnim);

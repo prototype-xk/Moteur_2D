@@ -40,22 +40,17 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 
 	Result res = Screen::update(time, events);
 
-	// Gestion des événements
 	for (auto& e : events) {
 		player.handleEvent(e);
 	}
 
-	// Calcul du deltaTime correct (en secondes)
 	float deltaTime = (time - lastTime) / 1000.0f;
 	lastTime = time;
 
-	// Mise à jour du joueur
 	player.update(deltaTime);
 
-	// Camera suit le joueur (utilise les getters)
 	m_camera.update(player.GetX(), player.GetY(), m_worldWidth, m_worldHeight);
 
-	// Parallax update avec camera
 	m_parallax.update(deltaTime, m_camera.getX(), m_camera.getY());
 
 	return res;
@@ -68,6 +63,5 @@ void GameScreen::renderer(SDL_Renderer* renderer) {
 
 	m_parallax.render(renderer, screenWidth, screenHeight);
 
-	// Le joueur gère maintenant son propre rendu avec les animations
-	player.render(renderer);
+	player.render(renderer, m_camera.getX(), m_camera.getY());
 }
