@@ -33,4 +33,5 @@ private:
 	int screenWidth = 0;
 	int screenHeight = 0;
 	bool playerSpawned;
+	Uint64 lastTime;
 };
