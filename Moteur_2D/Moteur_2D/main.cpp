@@ -10,9 +10,7 @@
 #include "MenuScreen.h"
 #include "GameOver.h"
 #include "ResourceManager.h"
-
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#include "Constant.h"
 
 enum class GameScreenEnum {
 	TitleScreen,

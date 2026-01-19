@@ -1,11 +1,15 @@
 #include "GameScreen.h"
+#include "Constant.h"
 #include <iostream>
 GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
-	, Renderer(renderer)                 // <--- on stocke le renderer
+	, Renderer(renderer)
 	, isFullScreen(false)
-	, resources(Renderer)              // <--- on initialise la référence
+	, resources(Renderer)
 	, titleBackGroundId("title_background")
+	, playerSpawned(false)
+	, screenWidth(0)
+	, screenHeight(0)
 
 {
 	if (!this->resources.loadTexture(titleBackGroundId, "assets/Background2.jpg"))
@@ -15,27 +19,19 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 }
 
 Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
-	Result res = Screen::update(time, events);
-
-	for (auto& e : events)
-	{
-		if (e.type == SDL_EVENT_KEY_DOWN && (e.key.key == SDLK_RETURN || e.key.key == SDLK_KP_ENTER)) {
-			isFullScreen = true;
-			if (!SDL_SetWindowFullscreen(window, isFullScreen)) {
-				std::cerr << "[ERROR] SDL_SetWindowFullscreen failed: " << SDL_GetError() << "\n";
-				isFullScreen = false;
-			}
-			else {
-				SDL_SyncWindow(window);
-			}
-			int w;
-			int h;
-
-			SDL_GetWindowSize(window, &w, &h);
-			std::cout << "[INFO] Window size: " << w << "x" << h << "\n";
-			return Result::nextScreen;
-		}
+	int w, h;
+	SDL_GetWindowSize(window, &w, &h);
+	if (!playerSpawned || w != screenWidth || h != screenHeight) {
+		screenWidth = w; screenHeight = h;
+		player.respawn(static_cast<float>(w), static_cast<float>(h));  // Besoin implémenté
+		playerSpawned = true;
+		std::cout << "[PLAYER] Spawn x=" << player.x << " y=" << player.y << "\n";
 	}
+
+	Result res = Screen::update(time, events);
+	for (auto& e : events) player.handleEvent(e);
+	float deltaTime = time / 1000.0f;
+	player.update(deltaTime);
 	return res;
 }
 
@@ -57,4 +53,5 @@ void GameScreen::renderer(SDL_Renderer* renderer) {
 	dst.h = static_cast<float>(h);
 
 	SDL_RenderTexture(renderer, bg, nullptr, &dst);
+	player.render(renderer);
 }

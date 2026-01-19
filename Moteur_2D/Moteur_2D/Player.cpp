@@ -2,12 +2,22 @@
 
 
 
-Player::Player()
-	: x(750),
-	y(500),
+Player::Player(float screenW, float screenH)
+	: x(screenW * 0.5f - RECT_WIDTH * 0.5f),
+	y(screenH * 0.75f),
 	rect{ x, y, RECT_WIDTH, RECT_HEIGHT },
 	color(PLAYER_IDLE_COLOR)
 {
+	std::cout << "[PLAYER] Spawned at x=" << x
+		<< " y=" << y
+		<< " screen " << screenW << "x" << screenH << ")\n";
+}
+
+void Player::respawn(float screenW, float screenH) {
+	x = screenW * 0.5f - RECT_WIDTH * 0.5f;
+	y = screenH * 0.75f;
+	rect = { x, y, RECT_WIDTH, RECT_HEIGHT };
+	std::cout << "[PLAYER] RESPAWN x=" << x << " y=" << y << "\n";
 }
 
 void Player::handleEvent(const SDL_Event& e) {

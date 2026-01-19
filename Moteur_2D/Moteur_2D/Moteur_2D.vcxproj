@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Constant.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameScreen.h" />
     <ClInclude Include="MenuScreen.h" />
