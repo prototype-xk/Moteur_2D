@@ -1,16 +1,23 @@
 #include "Player.h"
 
+enum AnimRow {
+	WALK = 8,
+	IDLE = 22,
+	JUMP = 26,
+	RUN = 36,
+};
 
-
-Player::Player(float screenW, float screenH)
+Player::Player(float screenW, float screenH, ResourceManager &res)
 	: x(screenW * 0.5f - RECT_WIDTH * 0.5f),
 	y(screenH * 0.75f),
 	rect{ x, y, RECT_WIDTH, RECT_HEIGHT },
-	color(PLAYER_IDLE_COLOR)
+	color(PLAYER_IDLE_COLOR),
+	resources(res)
 {
 	std::cout << "[PLAYER] Spawned at x=" << x
 		<< " y=" << y
 		<< " screen " << screenW << "x" << screenH << ")\n";
+	resources.loadTexture("", "");
 }
 
 void Player::respawn(float screenW, float screenH) {
@@ -66,11 +73,20 @@ void Player::render(SDL_Renderer* renderer) {
 	rect.x = x;
 	rect.y = y;
 
+	SDL_FRect rcSprite = rect;
 
+	int row;
 
-	SDL_SetRenderDrawColorRGBA(renderer, color);
+	//switch (state)
+	//{
+	//case :
+	//	row = 8
+	//		WALK = 8,
+	//		IDLE = 22,
+	//		JUMP = 26,
+	//}
 
+	rcSprite.y = 64 * row;
 
-
-	SDL_RenderFillRect(renderer, &rect);
+	SDL_RenderTexture(renderer, resources.getTexture(""), &rcSprite, &rect);
 }
