@@ -10,13 +10,18 @@
 
 class Player{
 public:
-	Player();
-	~Player();
 	float x, y;
 	Uint32 color;
 	SDL_FRect rect;
-	SDL_Event pe;
-	void update(const bool* keys, float deltaTime, std::vector<SDL_Event>& events);
+
+	bool moveLeft = false;
+	bool moveRight = false;
+	bool moveUp = false;
+	bool moveDown = false;
+
+	Player();
+	void handleEvent(const SDL_Event& e);
+	void update(float deltaTime);
 	void render(SDL_Renderer* renderer);
 	bool checkCollision(const SDL_FRect& other);
 };

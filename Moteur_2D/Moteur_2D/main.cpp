@@ -119,33 +119,40 @@ int main () {
 		float deltaTime = (currentTime - lastTime) / 1000.0f;
 		lastTime = currentTime;
 
-		events.clear();
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_EVENT_QUIT) {
 				running = false;
 			}
-			events.push_back(e);
-			if (e.type == SDL_EVENT_KEY_DOWN) {
-				if (e.key.key == SDLK_F11) {
-					isFullscreen = !isFullscreen;
-					if (!SDL_SetWindowFullscreen(window, isFullscreen)) {
-						std::cerr << "[ERROR] SDL_SetWindowFullscreen failed: " << SDL_GetError() << "\n";
-						isFullscreen = !isFullscreen;
-					}
-					else {
-						SDL_SyncWindow(window);
-					}
-					SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-					std::cout << "[INFO] Window size: " << windowWidth << "x" << windowHeight << "\n";
+			player.handleEvent(e);
+			
+
+			if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_F11) {
+				isFullscreen = !isFullscreen;
+				if (!SDL_SetWindowFullscreen(window, isFullscreen)) {
+					std::cerr << "[ERROR] SDL_SetWindowFullscreen failed: "
+						<< SDL_GetError() << "\n";
+					isFullscreen = !isFullscreen; // revient à l'ancien état
+				}
+				else {
+					SDL_SyncWindow(window);
+				}
+
+				if (!SDL_GetWindowSize(window, &windowWidth, &windowHeight)) {
+					std::cerr << "[ERROR] Failed to get window size: "
+						<< SDL_GetError() << "\n";
+				}
+				else {
+					std::cout << "[INFO] Window size: "
+						<< windowWidth << "x" << windowHeight << "\n";
 				}
 			}
 		}
-
+		player.update(deltaTime);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderTexture(renderer, backgroundTexture, nullptr, nullptr);
 		SDL_RenderTexture(renderer, textTexture, nullptr, &textRect);
-		player.update(keyboardState, deltaTime, events);
+		
 		player.render(renderer);
 		SDL_RenderPresent(renderer);
 	}
