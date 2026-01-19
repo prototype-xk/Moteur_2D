@@ -1,23 +1,23 @@
-#include "GameOver.h"
+#include "ScoreScreen.h"
 #include <iostream>
-GameOver::GameOver(SDL_Window* window, SDL_Renderer* renderer) :
+ScoreScreen::ScoreScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
-	, Renderer(renderer)                 // <--- on stocke le renderer
+	, Renderer(renderer)
 	, isFullScreen(false)
-	, resources(Renderer)              // <--- on initialise la référence
+	, resources(Renderer)
 	, titleBackGroundId("title_background")
 
 {
-	if (!this->resources.loadTexture(titleBackGroundId, "assets/Background3.jpg"))
+	if (!this->resources.loadTexture(titleBackGroundId, "assets/ScreenTitle.png"))
 	{
-		std::cerr << "[ERROR] TitleScreen failed to load assets/Background3.jpg\n";
+		std::cerr << "[ERROR] TitleScreen failed to load assets/ScreenTitle.png\n";
 	}
 }
 
-Screen::Result GameOver::update(Uint64 time, std::vector<SDL_Event>& events) {
+Screen::Result ScoreScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 	Result res = Screen::update(time, events);
 
-	for (auto& e : events)
+	for (const auto& e : events)
 	{
 		if (e.type == SDL_EVENT_KEY_DOWN && (e.key.key == SDLK_RETURN || e.key.key == SDLK_KP_ENTER)) {
 			isFullScreen = true;
@@ -39,10 +39,9 @@ Screen::Result GameOver::update(Uint64 time, std::vector<SDL_Event>& events) {
 	return res;
 }
 
-void GameOver::renderer(SDL_Renderer* renderer) {
+void ScoreScreen::renderer(SDL_Renderer* renderer) {
 	SDL_Texture* bg = resources.getTexture(titleBackGroundId);
 	if (!bg) {
-		std::cerr << "[ERROR] TitleScreen background texture not found\n";
 		return;
 	}
 

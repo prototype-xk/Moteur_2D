@@ -8,9 +8,9 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, titleBackGroundId("title_background")
 
 {
-	if (!this->resources.loadTexture(titleBackGroundId, "assets/ScreenTitle.png"))
+	if (!this->resources.loadTexture(titleBackGroundId, "assets/Background2.jpg"))
 	{
-		std::cerr << "[ERROR] TitleScreen failed to load assets/ScreenTitle.png\n";
+		std::cerr << "[ERROR] TitleScreen failed to load assets/Background2.jpg\n";
 	}
 }
 

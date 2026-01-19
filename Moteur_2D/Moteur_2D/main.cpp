@@ -6,6 +6,7 @@
 
 #include "TitleScreen.h"
 #include "GameScreen.h"
+#include "ScoreScreen.h"
 #include "MenuScreen.h"
 #include "GameOver.h"
 #include "ResourceManager.h"
@@ -17,6 +18,7 @@ enum class GameScreenEnum {
 	TitleScreen,
 	MainMenu,
 	Gameplay,
+	ScoreScreen,
 	GameOver
 };
 
@@ -68,6 +70,7 @@ int main () {
 	if (!createWindow(&window, &renderer)) {
 		TTF_Quit();
 		SDL_Quit();
+		return 1;
 	}
 
 	bool running = true;
@@ -82,12 +85,14 @@ int main () {
 	MenuScreen menuScreen(window, renderer);
 	GameScreen gameScreen(window, renderer);
 	GameOver gameOverScreen(window, renderer);
+	ScoreScreen scoreScreen(window, renderer);
 
 	std::vector<Screen*> screens = {
-		&titleScreen,
-		&menuScreen,
-		&gameScreen,
-		&gameOverScreen
+		&titleScreen,      // 0 - TitleScreen
+		&menuScreen,       // 1 - MainMenu
+		&gameScreen,       // 2 - Gameplay
+		&scoreScreen,      // 3 - ScoreScreen
+		&gameOverScreen    // 4 - GameOver
 	};
 
 	while (running) {
