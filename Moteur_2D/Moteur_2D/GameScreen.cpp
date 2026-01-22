@@ -14,13 +14,13 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, screenHeight(0)
 
 {
-	m_parallax.addLayer("assets/Background1.png",1.0f, 1.0f); //Speed/ Taille normale
+	m_parallax.addLayer("assets/Background2.jpg",1.0f, 4.5f); //Speed/ Taille normale
 
-	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 0.0f, 200.0); //Speed/ 50% plus petit/ x / y
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 0.0f, 200.0); //Speed/ 10% plus petit/ x / y
 
-	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 800.0f, 100.0); //Speed/ 50% plus petit/ x / y
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 800.0f, 100.0); //Speed/ 10% plus petit/ x / y
 
-	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.9, 400.0f, 500.0); //Speed/ 50% plus petit/ x / y
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 400.0f, -1000.0); //Speed/ 10% plus petit/ x / y
 
 	
 }

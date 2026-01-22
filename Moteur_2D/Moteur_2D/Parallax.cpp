@@ -21,50 +21,52 @@ bool Parallax::addLayer(const std::string& imagePath, float speedRatio, float sc
 	SDL_GetTextureSize(texture, &w, &h);
 
 	m_layers.push_back({
-		texture, speedRatio, 0.0f, 0.0f,
-		w * scale, //Taille reduite
-		h * scale, //Taille reduite
-		scale, initialX, initialY // Decalages initiaux 
+		texture,
+		speedRatio,
+		0.0f, 0.0f,
+		w,
+		h,
+		scale,
+		initialX,
+		initialY 
 	});
 	return true;
 }
 
-void Parallax::update(float deltaTime, float cameraX, float cameraY){
+void Parallax::update(float deltaTime, float cameraX, float cameraY) {
 	for (auto& layer : m_layers) {
 		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
 		layer.offsetX = -cameraX * layer.speedRatio + layer.initialOffsetX;
 		layer.offsetY = -cameraY * layer.speedRatio + layer.initialOffsetY;
-
-		//Boucle infinie horizontale
-		while (layer.offsetX > 0) layer.offsetX -= layer.width;
-		while (layer.offsetX < -layer.width) layer.offsetX += layer.width;
-
-		//Boucle infini verticale
-		while (layer.offsetY > 0) layer.offsetY -= layer.height;
-		while (layer.offsetY < -layer.height) layer.offsetY += layer.height;
 	}
 }
 
-void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHeight){
-	
+void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHeight) {
+
 	for (const auto& layer : m_layers) {
 		SDL_FRect srcRect = { 0, 0, layer.width, layer.height };
 
-		//Rendu horizontal infini
-		float x = layer.offsetX;
-		while (x < screenWidth) {
-			SDL_FRect destRect = { x, layer.offsetY, layer.width, layer.height };
-			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
-			x += layer.width;
-		}
+		float drawW = layer.width * layer.scale;
+		float drawH = layer.height * layer.scale;
 
-		//Copie suivante pour couvrir tout l'écran
-		x = layer.offsetX - layer.width;
-		while (x < screenWidth) {
-			SDL_FRect destRect = { x, layer.offsetY, layer.width, screenHeight };
-			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
-			x += layer.width;
+		// ? CALCUL DYNAMIQUE : combien de copies horizontalement ?
+		int copiesX = (int)ceilf((screenWidth + drawW) / drawW);
+		int copiesY = (int)ceilf((screenHeight + drawH) / drawH);
+
+		// ? BOUCLE INFINIE HORIZONTALE/VERTicale
+		for (int y = -1; y <= copiesY; y++) {
+			for (int x = -1; x <= copiesX; x++) {
+				float drawX = layer.offsetX + (x * drawW);
+				float drawY = layer.offsetY + (y * drawH);
+
+				// Optimisation : ne dessine que ce qui est visible
+				if (drawX + drawW > 0 && drawX < screenWidth &&
+					drawY + drawH > 0 && drawY < screenHeight) {
+
+					SDL_FRect destRect = { drawX, drawY, drawW, drawH };
+					SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
+				}
+			}
 		}
 	}
-
 }

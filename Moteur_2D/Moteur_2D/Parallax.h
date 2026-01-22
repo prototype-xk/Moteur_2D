@@ -12,9 +12,9 @@ public:
 		float offsetY;
 		float width;
 		float height;
-		float scale = 1.0f;
-		float initialOffsetX = 0.0f; //décalage initial X
-		float initialOffsetY = 0.0f; //décalage initial Y
+		float scale;
+		float initialOffsetX; //décalage initial X
+		float initialOffsetY; //décalage initial Y
 	};
 
 	Parallax(SDL_Renderer* renderer);
