@@ -23,7 +23,7 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	m_parallax.addLayer("assets/Cloud1.png", 2.0f, 0.5, 800.0f, 100.0); //Speed/ 10% plus petit/ x / y	
 }
 
-Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
+Screen::Result GameScreen::update(Uint64 deltaTime, std::vector<SDL_Event>& events) {
 	// D�tecte le redimensionnement de la fen�tre
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
@@ -35,16 +35,13 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 		std::cout << "[PLAYER] Respawn due to window resize\n";
 	}
 
-	Result res = Screen::update(time, events);
+	Result res = Screen::update(deltaTime, events);
 
 	for (auto& e : events) {
 		player.handleEvent(e);
 	}
-
-	float deltaTime = (time - lastTime) / 1000.0f;
-	lastTime = time;
-
-	player.update(deltaTime);
+		
+	player.update((float)deltaTime/1000.f);
 	//Camera suit le joueur
 
 	float safeX = player.GetX();

@@ -99,7 +99,6 @@ void Player::update(float deltaTime) {
 
 			// Applique la direction et limite la vitesse
 			float finalSpeed = moveLeft ? -speed : speed;
-			finalSpeed = SDL_clamp(finalSpeed, -MAX_SPEED, MAX_SPEED);
 
 			x += finalSpeed * deltaTime;
 		}
