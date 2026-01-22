@@ -16,22 +16,19 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, lastTime(SDL_GetTicks())
 	, player(0.0f, 0.0f, resources)  // Initialisation du player
 {
-	m_parallax.addLayer("assets/Background2.jpg", 1.0f);
-	m_parallax.addLayer("assets/Cloud1.png", 1.0f);
-	m_parallax.addLayer("assets/Cloud1.png", 1.0f);
+	m_parallax.addLayer("assets/Background2.jpg",1.0f, 4.5f); //Speed/ Taille normale
 
-	// Récupère les dimensions et repositionne le joueur
-	int w, h;
-	SDL_GetWindowSize(window, &w, &h);
-	screenWidth = w;
-	screenHeight = h;
-	player.respawn(static_cast<float>(w), static_cast<float>(h));  //  Utilise respawn() au lieu de =
-	playerSpawned = true;
-	std::cout << "[PLAYER] Initial spawn in GameScreen constructor\n";
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 0.0f, 200.0); //Speed/ 10% plus petit/ x / y
+
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 800.0f, 100.0); //Speed/ 10% plus petit/ x / y
+
+	m_parallax.addLayer("assets/Cloud1.png", 3.0f, 0.5, 400.0f, -1000.0); //Speed/ 10% plus petit/ x / y
+
+	
 }
 
 Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
-	// Détecte le redimensionnement de la fenêtre
+	// Dï¿½tecte le redimensionnement de la fenï¿½tre
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 	if (w != screenWidth || h != screenHeight) {
@@ -51,21 +48,10 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 	lastTime = time;
 
 	player.update(deltaTime);
-
-	//  VERSION SANS CLAMP : limite manuellement
-	float safeX = player.GetX();
-	float safeY = player.GetY();
-
-	if (safeX < 0.0f) safeX = 0.0f;
-	if (safeX > 10000.0f) safeX = 10000.0f;
-	if (safeY < 0.0f) safeY = 0.0f;
-	if (safeY > 10000.0f) safeY = 10000.0f;
-
-	SDL_Log("Player brut: %.1f, %.1f | Safe: %.1f, %.1f",
-		player.GetX(), player.GetY(), safeX, safeY);
-
-	m_camera.update(safeX, safeY, m_worldWidth, m_worldHeight);
-	m_parallax.update(deltaTime, safeX, safeY);
+	//Camera suit le joueur
+	m_camera.update(player.x, player.y);
+	//Parallax update avec camera
+	m_parallax.update(deltaTime, m_camera.getX(), m_camera.getY());
 
 	return res;
 }
@@ -79,5 +65,15 @@ void GameScreen::renderer(SDL_Renderer* renderer) {
 
 	m_parallax.render(renderer, screenWidth, screenHeight);
 
+	// Joueur toujours centrï¿½ ï¿½ l'ï¿½cran
+	float playerScreenX = screenWidth * 0.5f - 50.0f;  // Centre horizontal
+	float playerScreenY = screenHeight * 0.5f - 50.0f; // Centre vertical
+
+	SDL_FRect playerScreenRect = {
+		playerScreenX, playerScreenY,
+		64.0f, 64.0f  // Taille joueur (ajustez)
+	};
+
+	
 	player.render(renderer, m_camera.getX(), m_camera.getY());
 }

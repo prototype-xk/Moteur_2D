@@ -41,7 +41,7 @@ Player::Player(float screenW, float screenH, ResourceManager& res)
 	resources.loadTexture("player_sprite", "assets/character-spritesheet.png");
 	anims = resources.getTexture("player_sprite");
 
-	// Debug: vérifie que la texture est chargée
+	// Debug: vï¿½rifie que la texture est chargï¿½e
 	if (anims == nullptr) {
 		std::cerr << "[PLAYER ERROR] Failed to load sprite texture!\n";
 	}
@@ -78,11 +78,13 @@ void Player::handleEvent(const SDL_Event& e) {
 void Player::update(float deltaTime) {
 	State newState = state;
 	Uint64 currentTime = SDL_GetTicks();
+	float speed = 500.0f;
+	float jump = 600.0f;
 
-	// Machine à états : gestion des transitions
+	// Machine ï¿½ ï¿½tats : gestion des transitions
 	switch (state) {
 	case CHSTATE_IDLE:
-		// Si une touche directionnelle est pressée, passe en marche
+		// Si une touche directionnelle est pressï¿½e, passe en marche
 		if (moveLeft || moveRight) {
 			newState = CHSTATE_WALKING;
 			speed = moveLeft ? -300.0f : 300.0f;
@@ -91,27 +93,27 @@ void Player::update(float deltaTime) {
 		break;
 
 	case CHSTATE_WALKING:
-		// Si aucune touche n'est pressée, retour à idle
+		// Si aucune touche n'est pressï¿½e, retour ï¿½ idle
 		if (!moveLeft && !moveRight) {
 			newState = CHSTATE_IDLE;
 			speed = 0.0f;
 		}
 		else {
-			// Met à jour la direction et vitesse si changement
+			// Met ï¿½ jour la direction et vitesse si changement
 			speed = moveLeft ? -300.0f : 300.0f;
 			dir = moveLeft ? CHDIR_WEST : CHDIR_EAST;
 
-			// Déplacement horizontal
+			// Dï¿½placement horizontal
 			x += speed * deltaTime;
 		}
 		break;
 
 	case CHSTATE_JUMPING:
-		// TODO: Logique de saut à implémenter plus tard
+		// TODO: Logique de saut ï¿½ implï¿½menter plus tard
 		break;
 	}
 
-	// Déplacement vertical (temporaire, à remplacer par une vraie physique)
+	// Dï¿½placement vertical (temporaire, ï¿½ remplacer par une vraie physique)
 	if (moveUp) {
 		y -= 500.0f * deltaTime;
 	}
@@ -119,19 +121,20 @@ void Player::update(float deltaTime) {
 		y += 500.0f * deltaTime;
 	}
 
-	// Si l'état a changé, réinitialise le timer d'animation
+	// Si l'ï¿½tat a changï¿½, rï¿½initialise le timer d'animation
 	if (state != newState) {
 		state = newState;
 		animStartTime = currentTime;
 	}
 
-	// Met à jour le temps et la position du rectangle
+	// Met ï¿½ jour le temps et la position du rectangle
 	updateTime = currentTime;
 	rect.x = x;
 	rect.y = y;
 }
 
 void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
+	//Position ecran = position monde - position camera
 	float screenX = x - cameraX;
 	float screenY = y - cameraY;
 
@@ -139,33 +142,29 @@ void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
 		screenX, screenY,
 		RECT_WIDTH, RECT_HEIGHT
 	};
-
-	SDL_SetRenderDrawColorRGBA(renderer, color);
-	SDL_RenderFillRect(renderer, &screenRect);
 	
-	// Debug: vérifie que la texture existe
 	if (anims == nullptr) {
 		std::cerr << "[PLAYER ERROR] anims is nullptr in render!\n";
 		return;
 	}
 
-	// Récupère les dimensions de l'écran
+	// Rï¿½cupï¿½re les dimensions de l'ï¿½cran
 	int screenW, screenH;
 	SDL_GetRenderOutputSize(renderer, &screenW, &screenH);
 
-	// Le joueur est toujours centré à l'écran
+	// Le joueur est toujours centrï¿½ ï¿½ l'ï¿½cran
 	float centerX = screenW * 0.5f - ANIM_WIDTH * 0.5f;
 	float centerY = screenH * 0.5f - ANIM_HEIGHT * 0.5f;
 
-	// Rectangle de destination (toujours centré)
+	// Rectangle de destination (toujours centrï¿½)
 	SDL_FRect rcdAnim = { centerX, centerY, ANIM_WIDTH, ANIM_HEIGHT };
 
-	// Rectangle source (quelle partie de la spritesheet découper)
+	// Rectangle source (quelle partie de la spritesheet dï¿½couper)
 	SDL_FRect rcsAnim = { 0, 0, ANIM_WIDTH, ANIM_HEIGHT };
 
 	int row, frame;
 
-	// Détermine quelle animation jouer selon l'état
+	// Dï¿½termine quelle animation jouer selon l'ï¿½tat
 	switch (state) {
 	case CHSTATE_WALKING:
 		row = AnimRow::WALK;

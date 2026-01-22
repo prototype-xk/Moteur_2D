@@ -10,7 +10,7 @@ Parallax::~Parallax(){
 	}
 }
 
-bool Parallax::addLayer(const std::string& imagePath, float speedRatio){
+bool Parallax::addLayer(const std::string& imagePath, float speedRatio, float scale, float initialX, float initialY){
 	SDL_Texture* texture = IMG_LoadTexture(m_renderer, imagePath.c_str());
 	if (!texture) {
 		std::cerr << "[PARALLAX] Failed to load: " << imagePath << std::endl;
@@ -21,49 +21,52 @@ bool Parallax::addLayer(const std::string& imagePath, float speedRatio){
 	SDL_GetTextureSize(texture, &w, &h);
 
 	m_layers.push_back({
-		texture, speedRatio, 0.0f, 0.0f, w, h
+		texture,
+		speedRatio,
+		0.0f, 0.0f,
+		w,
+		h,
+		scale,
+		initialX,
+		initialY 
 	});
 	return true;
 }
 
-void Parallax::update(float deltaTime, float playerX, float playerY) {
+void Parallax::update(float deltaTime, float cameraX, float cameraY) {
 	for (auto& layer : m_layers) {
-		layer.offsetX = -playerX * layer.speedRatio;  // Plus speedRatio est petit, moins ça bouge
-		layer.offsetY = -playerY * layer.speedRatio;
+		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
+		layer.offsetX = -cameraX * layer.speedRatio + layer.initialOffsetX;
+		layer.offsetY = -cameraY * layer.speedRatio + layer.initialOffsetY;
 	}
 }
 
+void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHeight) {
 
-void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHeight){
-	/*Rendu de fond en noir pour masquer les bords
-	SDL_SetRenderDrawColor(renderer, 0, 0, 20, 255);
-	SDL_Rect bgRect = { 0, 0, (int)screenWidth, (int)screenHeight };
-	SDL_RenderFillRect(renderer, &bgRect); */
-	
 	for (const auto& layer : m_layers) {
 		SDL_FRect srcRect = { 0, 0, layer.width, layer.height };
 
-		//Rendu de 2 copies pour l'effet infini
-		float x = layer.offsetX;
-		while (x < screenWidth) {
-			SDL_FRect destRect = {
-				x, layer.offsetY,
-				layer.width, layer.height
-			};
-			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
-			x += layer.width;
-		}
+		float drawW = layer.width * layer.scale;
+		float drawH = layer.height * layer.scale;
 
-		//Copie suivante pour couvrir tout l'écran
-		x = layer.offsetX - layer.width;
-		while (x < screenWidth) {
-			SDL_FRect destRect = {
-				x, layer.offsetY,
-				layer.width, screenHeight
-			};
-			SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
-			x += layer.width;
+		// ? CALCUL DYNAMIQUE : combien de copies horizontalement ?
+		int copiesX = (int)ceilf((screenWidth + drawW) / drawW);
+		int copiesY = (int)ceilf((screenHeight + drawH) / drawH);
+
+		// ? BOUCLE INFINIE HORIZONTALE/VERTicale
+		for (int y = -1; y <= copiesY; y++) {
+			for (int x = -1; x <= copiesX; x++) {
+				float drawX = layer.offsetX + (x * drawW);
+				float drawY = layer.offsetY + (y * drawH);
+
+				// Optimisation : ne dessine que ce qui est visible
+				if (drawX + drawW > 0 && drawX < screenWidth &&
+					drawY + drawH > 0 && drawY < screenHeight) {
+
+					SDL_FRect destRect = { drawX, drawY, drawW, drawH };
+					SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
+				}
+			}
 		}
 	}
-
 }
