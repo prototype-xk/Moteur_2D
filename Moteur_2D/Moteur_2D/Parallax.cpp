@@ -38,6 +38,7 @@ void Parallax::update(float deltaTime, float cameraX, float cameraY) {
 		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
 		layer.offsetX = -cameraX * layer.speedRatio + layer.initialOffsetX;
 		layer.offsetY = -cameraY * layer.speedRatio + layer.initialOffsetY;
+
 	}
 }
 
@@ -49,23 +50,15 @@ void Parallax::render(SDL_Renderer* renderer, float screenWidth, float screenHei
 		float drawW = layer.width * layer.scale;
 		float drawH = layer.height * layer.scale;
 
-		// ? CALCUL DYNAMIQUE : combien de copies horizontalement ?
-		int copiesX = (int)ceilf((screenWidth + drawW) / drawW);
-		int copiesY = (int)ceilf((screenHeight + drawH) / drawH);
+		// ? MODULO LOCAL pour le rendu seulement
+		float renderOffsetX = fmodf(layer.offsetX, drawW);
+		float renderOffsetY = fmodf(layer.offsetY, drawH);
 
-		// ? BOUCLE INFINIE HORIZONTALE/VERTicale
-		for (int y = -1; y <= copiesY; y++) {
-			for (int x = -1; x <= copiesX; x++) {
-				float drawX = layer.offsetX + (x * drawW);
-				float drawY = layer.offsetY + (y * drawH);
-
-				// Optimisation : ne dessine que ce qui est visible
-				if (drawX + drawW > 0 && drawX < screenWidth &&
-					drawY + drawH > 0 && drawY < screenHeight) {
-
-					SDL_FRect destRect = { drawX, drawY, drawW, drawH };
-					SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
-				}
+		// Boucle infinie parfaite
+		for (float x = renderOffsetX - drawW; x < screenWidth + drawW; x += drawW) {
+			for (float y = renderOffsetY - drawH; y < screenHeight + drawH; y += drawH) {
+				SDL_FRect destRect = { x, y, drawW, drawH };
+				SDL_RenderTexture(renderer, layer.texture, &srcRect, &destRect);
 			}
 		}
 	}
