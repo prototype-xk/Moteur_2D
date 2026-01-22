@@ -12,7 +12,6 @@
 
 class Player {
 public:
-	Player() = default;
 	Player(float screenW, float screenH, ResourceManager& res);
 	void handleEvent(const SDL_Event& e);
 	void update(float deltaTime);
@@ -23,6 +22,8 @@ public:
 	inline float GetX() const { return x; }
 	inline float GetY() const { return y; }
 private:
+	ResourceManager& resources;
+
 	float x;
 	float y;
 	Uint32 color;
@@ -32,8 +33,6 @@ private:
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
-
-	ResourceManager& resources;
 
 	enum State {
 		CHSTATE_IDLE,

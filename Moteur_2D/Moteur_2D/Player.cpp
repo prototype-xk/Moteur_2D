@@ -17,16 +17,21 @@ enum AnimRow {
 };
 
 Player::Player(float screenW, float screenH, ResourceManager& res)
-	: x(screenW * 0.5f - RECT_WIDTH * 0.5f),
+	: resources(res),
+	x(screenW * 0.5f - RECT_WIDTH * 0.5f),
 	y(screenH * 0.75f),
 	rect{ x, y, RECT_WIDTH, RECT_HEIGHT },
 	color(PLAYER_IDLE_COLOR),
-	resources(res),
 	state(CHSTATE_IDLE),
 	dir(CHDIR_SOUTH),
-	speed(0.0f),
-	animStartTime(SDL_GetTicks()),
-	updateTime(SDL_GetTicks())
+	anims(nullptr),
+	animStartTime(0),
+	updateTime(0),
+	speed(500.0f),
+	moveLeft(false),
+	moveRight(false),
+	moveUp(false),
+	moveDown(false)
 {
 	std::cout << "[PLAYER] Spawned at x=" << x
 		<< " y=" << y
@@ -46,6 +51,12 @@ void Player::respawn(float screenW, float screenH) {
 	x = screenW * 0.5f - RECT_WIDTH * 0.5f;
 	y = screenH * 0.75f;
 	rect = { x, y, RECT_WIDTH, RECT_HEIGHT };
+
+	moveLeft = false;
+	moveRight = false;
+	moveUp = false;
+	moveDown = false;
+
 	std::cout << "[PLAYER] RESPAWN x=" << x << " y=" << y << "\n";
 }
 
@@ -121,6 +132,17 @@ void Player::update(float deltaTime) {
 }
 
 void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
+	float screenX = x - cameraX;
+	float screenY = y - cameraY;
+
+	SDL_FRect screenRect = {
+		screenX, screenY,
+		RECT_WIDTH, RECT_HEIGHT
+	};
+
+	SDL_SetRenderDrawColorRGBA(renderer, color);
+	SDL_RenderFillRect(renderer, &screenRect);
+	
 	// Debug: vérifie que la texture existe
 	if (anims == nullptr) {
 		std::cerr << "[PLAYER ERROR] anims is nullptr in render!\n";

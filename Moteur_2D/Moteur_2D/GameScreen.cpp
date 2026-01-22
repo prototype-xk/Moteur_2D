@@ -1,6 +1,7 @@
 #include "GameScreen.h"
 #include "Constant.h"
 #include <iostream>
+#include <algorithm>
 GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	window(window)
 	, Renderer(renderer)
@@ -15,7 +16,9 @@ GameScreen::GameScreen(SDL_Window* window, SDL_Renderer* renderer) :
 	, lastTime(SDL_GetTicks())
 	, player(0.0f, 0.0f, resources)  // Initialisation du player
 {
-	m_parallax.addLayer("assets/Background2.jpg", 0.3f);
+	m_parallax.addLayer("assets/Background2.jpg", 1.0f);
+	m_parallax.addLayer("assets/Cloud1.png", 1.0f);
+	m_parallax.addLayer("assets/Cloud1.png", 1.0f);
 
 	// Récupère les dimensions et repositionne le joueur
 	int w, h;
@@ -49,12 +52,25 @@ Screen::Result GameScreen::update(Uint64 time, std::vector<SDL_Event>& events) {
 
 	player.update(deltaTime);
 
-	m_camera.update(player.GetX(), player.GetY(), m_worldWidth, m_worldHeight);
+	//  VERSION SANS CLAMP : limite manuellement
+	float safeX = player.GetX();
+	float safeY = player.GetY();
 
-	m_parallax.update(deltaTime, m_camera.getX(), m_camera.getY());
+	if (safeX < 0.0f) safeX = 0.0f;
+	if (safeX > 10000.0f) safeX = 10000.0f;
+	if (safeY < 0.0f) safeY = 0.0f;
+	if (safeY > 10000.0f) safeY = 10000.0f;
+
+	SDL_Log("Player brut: %.1f, %.1f | Safe: %.1f, %.1f",
+		player.GetX(), player.GetY(), safeX, safeY);
+
+	m_camera.update(safeX, safeY, m_worldWidth, m_worldHeight);
+	m_parallax.update(deltaTime, safeX, safeY);
 
 	return res;
 }
+
+
 
 void GameScreen::renderer(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColorRGBA(renderer, PARALLAX_NIGHT_SKY_COLOR);
