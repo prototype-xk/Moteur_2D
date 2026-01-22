@@ -26,12 +26,7 @@ Player::Player(float screenW, float screenH, ResourceManager& res)
 	dir(CHDIR_SOUTH),
 	anims(nullptr),
 	animStartTime(0),
-	updateTime(0),
-	speed(500.0f),
-	moveLeft(false),
-	moveRight(false),
-	moveUp(false),
-	moveDown(false)
+	updateTime(0)
 {
 	std::cout << "[PLAYER] Spawned at x=" << x
 		<< " y=" << y
@@ -78,33 +73,35 @@ void Player::handleEvent(const SDL_Event& e) {
 void Player::update(float deltaTime) {
 	State newState = state;
 	Uint64 currentTime = SDL_GetTicks();
-	float speed = 500.0f;
+	const float WALK_SPEED = 300.0f;  // Vitesse de marche de base
+	const float MAX_SPEED = 500.0f;   // Vitesse maximale autorisée
+	float speed = 0.0f;
 	float jump = 600.0f;
 
 	// Machine � �tats : gestion des transitions
 	switch (state) {
 	case CHSTATE_IDLE:
-		// Si une touche directionnelle est press�e, passe en marche
 		if (moveLeft || moveRight) {
 			newState = CHSTATE_WALKING;
-			speed = moveLeft ? -300.0f : 300.0f;
+			speed = WALK_SPEED;  // Utilise la valeur de base
 			dir = moveLeft ? CHDIR_WEST : CHDIR_EAST;
 		}
 		break;
 
 	case CHSTATE_WALKING:
-		// Si aucune touche n'est press�e, retour � idle
 		if (!moveLeft && !moveRight) {
 			newState = CHSTATE_IDLE;
 			speed = 0.0f;
 		}
 		else {
-			// Met � jour la direction et vitesse si changement
-			speed = moveLeft ? -300.0f : 300.0f;
+			speed = WALK_SPEED;
 			dir = moveLeft ? CHDIR_WEST : CHDIR_EAST;
 
-			// D�placement horizontal
-			x += speed * deltaTime;
+			// Applique la direction et limite la vitesse
+			float finalSpeed = moveLeft ? -speed : speed;
+			finalSpeed = SDL_clamp(finalSpeed, -MAX_SPEED, MAX_SPEED);
+
+			x += finalSpeed * deltaTime;
 		}
 		break;
 
@@ -115,10 +112,10 @@ void Player::update(float deltaTime) {
 
 	// D�placement vertical (temporaire, � remplacer par une vraie physique)
 	if (moveUp) {
-		y -= 500.0f * deltaTime;
+		y -= jump * deltaTime;
 	}
 	if (moveDown) {
-		y += 500.0f * deltaTime;
+		y += jump * deltaTime;
 	}
 
 	// Si l'�tat a chang�, r�initialise le timer d'animation

@@ -7,14 +7,14 @@ class Parallax{
 public:
 	struct Layer {
 		SDL_Texture* texture;
-		float speedRatio; //0.1f = lent (fond), 0.8f = rapide(premier plan)
-		float offsetX;
-		float offsetY;
-		float width;
-		float height;
-		float scale;
-		float initialOffsetX; //décalage initial X
-		float initialOffsetY; //décalage initial Y
+		float speedRatio=0; //0.1f = lent (fond), 0.8f = rapide(premier plan)
+		float offsetX=0;
+		float offsetY=0;
+		float width=0;
+		float height=0;
+		float scale=0;
+		float initialOffsetX=0; //décalage initial X
+		float initialOffsetY=0; //décalage initial Y
 	};
 
 	Parallax(SDL_Renderer* renderer);
