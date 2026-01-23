@@ -32,11 +32,9 @@ Player::Player(float screenW, float screenH, ResourceManager& res)
 		<< " y=" << y
 		<< " screen " << screenW << "x" << screenH << ")\n";
 
-	// Charge ta spritesheet (mets le bon chemin de ton fichier)
 	resources.loadTexture("player_sprite", "assets/character-spritesheet.png");
 	anims = resources.getTexture("player_sprite");
 
-	// Debug: v�rifie que la texture est charg�e
 	if (anims == nullptr) {
 		std::cerr << "[PLAYER ERROR] Failed to load sprite texture!\n";
 	}
@@ -73,17 +71,16 @@ void Player::handleEvent(const SDL_Event& e) {
 void Player::update(float deltaTime) {
 	State newState = state;
 	Uint64 currentTime = SDL_GetTicks();
-	const float WALK_SPEED = 300.0f;  // Vitesse de marche de base
-	const float MAX_SPEED = 500.0f;   // Vitesse maximale autorisée
+	const float WALK_SPEED = 300.0f;
+	const float MAX_SPEED = 500.0f;
 	float speed = 0.0f;
 	float jump = 600.0f;
 
-	// Machine � �tats : gestion des transitions
 	switch (state) {
 	case CHSTATE_IDLE:
 		if (moveLeft || moveRight) {
 			newState = CHSTATE_WALKING;
-			speed = WALK_SPEED;  // Utilise la valeur de base
+			speed = WALK_SPEED;
 			dir = moveLeft ? CHDIR_WEST : CHDIR_EAST;
 		}
 		break;
@@ -97,7 +94,6 @@ void Player::update(float deltaTime) {
 			speed = WALK_SPEED;
 			dir = moveLeft ? CHDIR_WEST : CHDIR_EAST;
 
-			// Applique la direction et limite la vitesse
 			float finalSpeed = moveLeft ? -speed : speed;
 
 			x += finalSpeed * deltaTime;
@@ -105,11 +101,9 @@ void Player::update(float deltaTime) {
 		break;
 
 	case CHSTATE_JUMPING:
-		// TODO: Logique de saut � impl�menter plus tard
 		break;
 	}
 
-	// D�placement vertical (temporaire, � remplacer par une vraie physique)
 	if (moveUp) {
 		y -= jump * deltaTime;
 	}
@@ -117,20 +111,17 @@ void Player::update(float deltaTime) {
 		y += jump * deltaTime;
 	}
 
-	// Si l'�tat a chang�, r�initialise le timer d'animation
 	if (state != newState) {
 		state = newState;
 		animStartTime = currentTime;
 	}
 
-	// Met � jour le temps et la position du rectangle
 	updateTime = currentTime;
 	rect.x = x;
 	rect.y = y;
 }
 
 void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
-	//Position ecran = position monde - position camera
 	float screenX = x - cameraX;
 	float screenY = y - cameraY;
 
@@ -144,23 +135,18 @@ void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
 		return;
 	}
 
-	// R�cup�re les dimensions de l'�cran
 	int screenW, screenH;
 	SDL_GetRenderOutputSize(renderer, &screenW, &screenH);
 
-	// Le joueur est toujours centr� � l'�cran
 	float centerX = screenW * 0.5f - ANIM_WIDTH * 0.5f;
 	float centerY = screenH * 0.5f - ANIM_HEIGHT * 0.5f;
 
-	// Rectangle de destination (toujours centr�)
 	SDL_FRect rcdAnim = { centerX, centerY, ANIM_WIDTH, ANIM_HEIGHT };
 
-	// Rectangle source (quelle partie de la spritesheet d�couper)
 	SDL_FRect rcsAnim = { 0, 0, ANIM_WIDTH, ANIM_HEIGHT };
 
 	int row, frame;
 
-	// D�termine quelle animation jouer selon l'�tat
 	switch (state) {
 	case CHSTATE_WALKING:
 		row = AnimRow::WALK;
@@ -172,16 +158,14 @@ void Player::render(SDL_Renderer* renderer, float cameraX, float cameraY) {
 		frame = 0;
 		break;
 
-	default: // CHSTATE_IDLE
+	default:
 		row = AnimRow::IDLE;
 		frame = GetAnimFrame(ANIM_DELAY_IDLE, ANIM_FRAMES_IDLE);
 		break;
 	}
 
-	// Calcule la position dans la spritesheet
 	rcsAnim.x = ANIM_WIDTH * frame;
 	rcsAnim.y = ANIM_HEIGHT * (row + dir);
 
-	// Affiche la texture
 	SDL_RenderTexture(renderer, anims, &rcsAnim, &rcdAnim);
 }

@@ -13,7 +13,6 @@ public:
           m_x(0.0f), m_y(0.0) {}
 
     void update(float playerX, float playerY) {
-        //Centre le joueur à l'écran
         m_x = playerX - m_screenWidth * 0.5f;
         m_y = playerY - m_screenHeight * 0.5f;
     }

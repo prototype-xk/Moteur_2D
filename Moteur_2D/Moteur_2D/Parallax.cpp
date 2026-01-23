@@ -35,7 +35,6 @@ bool Parallax::addLayer(const std::string& imagePath, float speedRatio, float sc
 
 void Parallax::update(float deltaTime, float cameraX, float cameraY) {
 	for (auto& layer : m_layers) {
-		//Le parallax suit le joueur avec un ratio plus petit donc plus lent
 		layer.offsetX = -cameraX * layer.speedRatio + layer.initialOffsetX;
 		layer.offsetY = -cameraY * layer.speedRatio + layer.initialOffsetY;
 
