@@ -47,20 +47,18 @@ void Button::handleEvent(const SDL_Event& e)
         m_isHovered = inside;
     }
 
-    if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-        if (e.button.button == SDL_BUTTON_LEFT) {
-            float mx = e.button.x;
-            float my = e.button.y;
+    if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == SDL_BUTTON_LEFT) {
+        float mx = e.button.x;
+        float my = e.button.y;
 
-            bool inside =
-                mx >= baseRect.x &&
-                mx <= baseRect.x + baseRect.w &&
-                my >= baseRect.y &&
-                my <= baseRect.y + baseRect.h;
+        bool inside =
+            mx >= baseRect.x &&
+            mx <= baseRect.x + baseRect.w &&
+            my >= baseRect.y &&
+            my <= baseRect.y + baseRect.h;
 
-            if (inside) {
-                std::cout << "[BUTTON] Clicked on the button\n";
-            }
+        if (inside) {
+            std::cout << "[BUTTON] Clicked on the button\n";
         }
     }
 }
